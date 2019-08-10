@@ -1,0 +1,41 @@
+{% load static %}
+<html>
+<header></header>
+<body>
+<h2>Movie you selected is:</h2>
+
+<img width="100" src="{% if movie.picture %}{{ movie.picture.url }}{% else %}{% static "movies/1.jpg" %}{% endif %}" />
+<img width="100" src="{{ movie.get_picture }}" />
+
+<p><b>Title:</b> {{ movie.title }}</p>
+<h3>Crew List:</h3>
+<ul>
+{%  for mc in mc_list %}
+    <li>{{ mc.crew.full_name }} - {{ mc.role.title }}</li>
+{% endfor %}
+</ul>
+
+<p><b>Avg Rating:</b> {{ movie.rating_avg }}/5</p>
+<p><b># of Votes:</b> {{ movie.rating_count }}</p>
+<form action="{% url 'movie-post-comment' movie.id %}" method="post">
+    {% csrf_token %}
+    {{ rate_form.as_p }}
+</form>
+
+<h3>Comment List:</h3>
+<form action="{% url 'movie-post-comment' movie.id %}" method="post">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <input type="submit" value="Submit">
+</form>
+{%  for c in comment_list %}
+    <p>
+        {{ c.created_time }}<br />
+        {{ c.user.username }}<br />
+        <pre>{{ c.comment_text }}</pre>
+        <hr />
+    </p>
+{% endfor %}
+
+</body>
+</html>
